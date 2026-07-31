@@ -1,1 +1,1 @@
-git@github.com:lautaorsi/Federated-Learning.git
+http://ichatz.me/Site/FederatedLearningECI2026Project
