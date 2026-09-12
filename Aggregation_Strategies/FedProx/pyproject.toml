@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fedProx"
+version = "1.0.0"
+description = "fedProx strategy variant of pytorchexample"
+license = "Apache-2.0"
+dependencies = [
+    "flwr[simulation]>=1.13.0",
+    "torch",
+    "torchvision",
+    "numpy",
+    "scikit-learn",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.flwr.app]
+publisher = "your_name"
+
+[tool.flwr.app.components]
+serverapp = "fedprox.server_app:app"
+clientapp = "fedprox.client_app:app"
+
+[tool.flwr.app.config]
+num-server-rounds = 5
+fraction-evaluate = 0.5
+local-epochs = 1
+batch-size = 32
+learning-rate = 0.1
+save-model = true
+
+
+#######################################################################
+# CONFIGURATION MIGRATION NOTICE:
+#
+# What was previously called "federation config" for SuperLink
+# connections in pyproject.toml has been renamed and moved.
+#
+# These settings are now **SuperLink connection configuration**
+# and are defined in the Flower configuration file.
+#
+# The entries below are commented out intentionally and are kept
+# only as a migration reference.
+#
+# Docs: https://flower.ai/docs/framework/ref-flower-configuration.html
+#######################################################################
+
+# [tool.flwr.federations]
+# default = "local-simulation"
+
+# [tool.flwr.federations.local-simulation]
+# options.num-supernodes = 10
