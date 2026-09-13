@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "fedAvg"
+name = "fedavgm"
 version = "1.0.0"
-description = "FedAvg strategy variant of pytorchexample"
+description = "fedAvgM strategy variant"
 license = "Apache-2.0"
 dependencies = [
     "flwr[simulation]>=1.13.0",
@@ -16,14 +16,14 @@ dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["fedavg"]
+packages = ["."]
 
 [tool.flwr.app]
 publisher = "your_name"
 
 [tool.flwr.app.components]
-serverapp = "fedavg.server_app:app"
-clientapp = "fedavg.client_app:app"
+serverapp = "fedavgm.server_app:app"
+clientapp = "fedavgm.client_app:app"
 
 [tool.flwr.app.config]
 num-server-rounds = 5
@@ -54,4 +54,3 @@ save-model = true
 
 # [tool.flwr.federations.local-simulation]
 # options.num-supernodes = 10
-

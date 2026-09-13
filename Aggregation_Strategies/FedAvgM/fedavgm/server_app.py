@@ -3,9 +3,9 @@
 import torch
 from flwr.app import ArrayRecord, ConfigRecord, Context, MetricRecord
 from flwr.serverapp import Grid, ServerApp
-from flwr.serverapp.strategy import FedAvg
+from flwr.serverapp.strategy import FedAvgM
 
-from fedavg.task import Net, load_centralized_dataset, test
+from fedavgm.task import Net, load_centralized_dataset, test
 
 # Create ServerApp
 app = ServerApp()
@@ -22,11 +22,10 @@ def main(grid: Grid, context: Context) -> None:
 
     # Load global model
     global_model = Net()
-
     arrays = ArrayRecord(global_model.state_dict())
 
     # Initialize FedAvg strategy
-    strategy = FedAvg(fraction_evaluate=fraction_evaluate)
+    strategy = FedAvgM(fraction_evaluate=fraction_evaluate)
 
     # Start strategy, run FedAvg for `num_rounds`
     result = strategy.start(
@@ -41,7 +40,7 @@ def main(grid: Grid, context: Context) -> None:
         # Save final model to disk
         print("\nSaving final model to disk...")
         state_dict = result.arrays.to_torch_state_dict()
-        torch.save(state_dict, "01final_model.pt")
+        torch.save(state_dict, "final_model.pt")
 
 
 def global_evaluate(server_round: int, arrays: ArrayRecord) -> MetricRecord:

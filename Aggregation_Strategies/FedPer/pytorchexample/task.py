@@ -46,13 +46,13 @@ class Net(nn.Module):
 
 # ---------------------------------------------------------------------------
 # Thin wrappers kept so client_app.py / server_app.py's existing imports
-# (`from pytorchexample_fedavg.task import load_data, load_centralized_dataset`)
+# (`from pytorchexample.task import load_data, load_centralized_dataset`)
 # keep working unchanged.
 # ---------------------------------------------------------------------------
 
 
 def load_data(partition_id: int, num_partitions: int, batch_size: int):
-    return get_client_dataloaders(partition_id, num_partitions, batch_size, alpha=1.0)
+    return get_client_dataloaders(partition_id, num_partitions, batch_size)
 
 
 def load_centralized_dataset():

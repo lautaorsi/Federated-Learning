@@ -4,9 +4,9 @@ import torch
 from flwr.app import ArrayRecord, Context, Message, MetricRecord, RecordDict
 from flwr.clientapp import ClientApp
 
-from fedavg.task import Net, load_data
-from fedavg.task import test as test_fn
-from fedavg.task import train as train_fn
+from fedavgm.task import Net, load_data
+from fedavgm.task import test as test_fn
+from fedavgm.task import train as train_fn
 
 # Flower ClientApp
 app = ClientApp()
@@ -15,9 +15,9 @@ app = ClientApp()
 @app.train()
 def train(msg: Message, context: Context):
     """Train the model on local data."""
+
     # Load the model and initialize it with the received weights
     model = Net()
-
     model.load_state_dict(msg.content["arrays"].to_torch_state_dict())
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
