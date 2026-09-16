@@ -11,7 +11,7 @@ the change into each strategy's dataset.py to keep them in sync.
 import torch
 import torch.nn as nn
 
-from fedadam.dataset import get_centralized_dataloader, get_client_dataloaders
+from dataset import get_centralized_dataloader, get_client_dataloaders
 
 
 class Net(nn.Module):
@@ -51,7 +51,7 @@ class Net(nn.Module):
 # ---------------------------------------------------------------------------
 
 
-def load_data(partition_id: int, num_partitions: int, batch_size: int):
+def load_data(partition_id: int, num_partitions: int, batch_size: int, alpha: float):
     return get_client_dataloaders(partition_id, num_partitions, batch_size)
 
 

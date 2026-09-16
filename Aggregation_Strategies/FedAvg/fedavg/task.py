@@ -11,7 +11,7 @@ the change into each strategy's dataset.py to keep them in sync.
 import torch
 import torch.nn as nn
 
-from fedavg.dataset import get_centralized_dataloader, get_client_dataloaders
+from dataset import get_centralized_dataloader, get_client_dataloaders
 
 
 class Net(nn.Module):
@@ -31,7 +31,7 @@ class Net(nn.Module):
             nn.Conv2d(16, 32, (3, 3), padding="same", stride=1),
             nn.ReLU(),
             # Classifier
-            nn.Flatten(),
+            nn.Flatten(),   
             nn.Dropout(p=0.3),
             nn.Linear(2048, 128),
             nn.Dropout(p=0.3),
@@ -51,8 +51,8 @@ class Net(nn.Module):
 # ---------------------------------------------------------------------------
 
 
-def load_data(partition_id: int, num_partitions: int, batch_size: int):
-    return get_client_dataloaders(partition_id, num_partitions, batch_size, alpha=1.0)
+def load_data(partition_id: int, num_partitions: int, batch_size: int, alpha: float):
+    return get_client_dataloaders(partition_id, num_partitions, batch_size, alpha=alpha)
 
 
 def load_centralized_dataset():
@@ -60,23 +60,43 @@ def load_centralized_dataset():
 
 
 def train(net, trainloader, epochs, lr, device):
-    """Train the model on the training set."""
-    net.to(device)  # move model to GPU if available
+    net.to(device)
+
     criterion = torch.nn.NLLLoss().to(device)
-    optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9)
+    optimizer = torch.optim.SGD(
+        net.parameters(),
+        lr=lr,
+        momentum=0.9
+    )
+
     net.train()
     running_loss = 0.0
-    for _ in range(epochs):
-        for images, labels in trainloader:
+
+    for epoch in range(epochs):
+        for batch_idx, (images, labels) in enumerate(trainloader):
+
             images = images.to(device)
             labels = labels.to(device)
+
             optimizer.zero_grad()
-            loss = criterion(net(images), labels)
+
+            outputs = net(images)
+            loss = criterion(outputs, labels)
+
+            if not torch.isfinite(loss):
+                return float("nan")
+
             loss.backward()
+
             optimizer.step()
+
+            for name, param in net.named_parameters():
+                if not torch.isfinite(param).all():
+                    return float("nan")
+
             running_loss += loss.item()
-    avg_trainloss = running_loss / (epochs * len(trainloader))
-    return avg_trainloss
+
+    return running_loss / (epochs * len(trainloader))
 
 
 def test(net, testloader, device):

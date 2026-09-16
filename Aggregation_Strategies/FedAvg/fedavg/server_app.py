@@ -4,6 +4,10 @@ import torch
 from flwr.app import ArrayRecord, ConfigRecord, Context, MetricRecord
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
+from pathlib import Path
+import random
+import numpy as np
+
 
 from fedavg.task import Net, load_centralized_dataset, test
 
@@ -14,6 +18,10 @@ app = ServerApp()
 @app.main()
 def main(grid: Grid, context: Context) -> None:
     """Main entry point for the ServerApp."""
+    seed = context.run_config["seed"]
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
     # Read run config
     fraction_evaluate: float = context.run_config["fraction-evaluate"]
@@ -38,10 +46,18 @@ def main(grid: Grid, context: Context) -> None:
     )
 
     if context.run_config["save-model"]:
+
+        alpha = context.run_config["alpha"]
+        seed = context.run_config["seed"]
+
         # Save final model to disk
         print("\nSaving final model to disk...")
         state_dict = result.arrays.to_torch_state_dict()
-        torch.save(state_dict, "01final_model.pt")
+        output_path = Path(
+            f"/home/lo/Documents/Projects/Federated-Learning/Aggregation_Strategies/FedAvg/fedavg_alpha_{alpha}_seed_{seed}.pt"
+        )
+        torch.save(state_dict, output_path)
+
 
 
 def global_evaluate(server_round: int, arrays: ArrayRecord) -> MetricRecord:

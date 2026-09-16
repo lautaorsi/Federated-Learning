@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, TensorDataset
 
 NUM_CLASSES = 10
-DIRICHLET_ALPHA = 1.0
+DIRICHLET_ALPHA = 0.5
 RANDOM_SEED = 42
 
 CIFAR10_CLASSES = [
@@ -86,16 +86,10 @@ def _ensure_raw_split():
     on whichever process gets there first. Every later call, in every
     process, just reads the small cached file back."""
 
-    print(">>> _ensure_raw_split: START", flush=True)
-
     if RAW_SPLIT_PATH.exists():
-        print(">>> _ensure_raw_split: CACHE EXISTS", flush=True)
         return torch.load(RAW_SPLIT_PATH, weights_only=True)
-    print(">>> _ensure_raw_split: BUILDING", flush=True)
-    result = _build_raw_split()
-    print(">>> _ensure_raw_split: BUILD COMPLETE", flush=True)
-
-    return result
+    
+    return _build_raw_split()
 
 
 # ---------------------------------------------------------------------------
@@ -175,16 +169,9 @@ def _build_partitions(num_partitions: int, alpha: float):
 
 
 def _ensure_partitions(num_partitions: int, alpha: float):
-    print(
-        f">>> _ensure_partitions: START n={num_partitions}, alpha={alpha}",
-        flush=True,
-    )
     if not _partitions_cached(num_partitions, alpha):
-        print(">>> _ensure_partitions: BUILDING", flush=True)
         _build_partitions(num_partitions, alpha)
-        print(">>> _ensure_partitions: BUILD COMPLETE", flush=True)
-    else:
-        print(">>> _ensure_partitions: CACHE EXISTS", flush=True)
+
 
 
 # ---------------------------------------------------------------------------
@@ -203,16 +190,7 @@ def get_client_dataloaders(
     Cheap after the first call anywhere (any process): just reads this one
     client's small cached shard off disk, never touches the full dataset.
     """
-    print(
-        f">>> get_client_dataloaders: client={partition_id}/{num_partitions}",
-        flush=True,
-    )
     _ensure_partitions(num_partitions, alpha)
-
-    print(
-        f">>> Loading shard for client {partition_id}",
-        flush=True,
-    )
 
     train_blob = torch.load(_client_shard_path(num_partitions, alpha, partition_id, "train"), weights_only=True)
     val_blob = torch.load(_client_shard_path(num_partitions, alpha, partition_id, "val"), weights_only=True)

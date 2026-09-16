@@ -4,6 +4,7 @@ import torch
 from flwr.app import ArrayRecord, ConfigRecord, Context, MetricRecord
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAdam
+from pathlib import Path
 
 from fedadam.task import Net, load_centralized_dataset, test
 
@@ -19,6 +20,8 @@ def main(grid: Grid, context: Context) -> None:
     fraction_evaluate: float = context.run_config["fraction-evaluate"]
     num_rounds: int = context.run_config["num-server-rounds"]
     lr: float = context.run_config["learning-rate"]
+    alpha: float = context.run_config["alpha"]
+    seed: int = context.run_config["seed"]
 
     # Load global model
     global_model = Net()
@@ -40,7 +43,10 @@ def main(grid: Grid, context: Context) -> None:
         # Save final model to disk
         print("\nSaving final model to disk...")
         state_dict = result.arrays.to_torch_state_dict()
-        torch.save(state_dict, "final_model.pt")
+        output_path = Path(
+            f"/home/lo/Documents/Projects/Federated-Learning/Aggregation_Strategies/FedAdam/fedAdam_alpha_{alpha}_seed_{seed}.pt"
+        )
+        torch.save(state_dict, output_path)
 
 
 def global_evaluate(server_round: int, arrays: ArrayRecord) -> MetricRecord:

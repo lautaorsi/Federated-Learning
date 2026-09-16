@@ -11,7 +11,7 @@ the change into each strategy's dataset.py to keep them in sync.
 import torch
 import torch.nn as nn
 
-from fedavgm.dataset import get_centralized_dataloader, get_client_dataloaders
+from dataset import get_centralized_dataloader, get_client_dataloaders
 
 
 class Net(nn.Module):

@@ -10,7 +10,7 @@ read their small cached shard off disk.
 Usage (from inside your app's installed environment):
     python precompute_data.py
 """
-from fedavg.dataset import DIRICHLET_ALPHA, _ensure_partitions, _ensure_raw_split
+from Aggregation_Strategies.shared.dataset import DIRICHLET_ALPHA, _ensure_partitions, _ensure_raw_split
 
 # Match these to what you'll actually pass to `flwr run` (num-supernodes /
 # your run-config's alpha), so the cache this builds is the one your run

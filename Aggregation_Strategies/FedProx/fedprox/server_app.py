@@ -4,6 +4,8 @@ import torch
 from flwr.app import ArrayRecord, ConfigRecord, Context, MetricRecord
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedProx
+from pathlib import Path
+
 
 from fedprox.task import Net, load_centralized_dataset, test
 
@@ -19,6 +21,9 @@ def main(grid: Grid, context: Context) -> None:
     fraction_evaluate: float = context.run_config["fraction-evaluate"]
     num_rounds: int = context.run_config["num-server-rounds"]
     lr: float = context.run_config["learning-rate"]
+    mu: float = context.run_config["mu"]
+    alpha: float = context.run_config["alpha"]
+    seed: int = context.run_config["seed"]
 
 
     # Load global model
@@ -26,7 +31,7 @@ def main(grid: Grid, context: Context) -> None:
     arrays = ArrayRecord(global_model.state_dict())
 
     # Initialize FedAvg strategy
-    strategy = FedProx(fraction_evaluate=fraction_evaluate)
+    strategy = FedProx(fraction_evaluate=fraction_evaluate, proximal_mu=mu)
 
     # Start strategy, run FedAvg for `num_rounds`
     result = strategy.start(
@@ -41,7 +46,10 @@ def main(grid: Grid, context: Context) -> None:
         # Save final model to disk
         print("\nSaving final model to disk...")
         state_dict = result.arrays.to_torch_state_dict()
-        torch.save(state_dict, "01final_model.pt")
+        output_path = Path(
+            f"/home/lo/Documents/Projects/Federated-Learning/Aggregation_Strategies/FedProx/models/fedProx_alpha_{alpha}_seed_{seed}.pt"
+        )
+        torch.save(state_dict, output_path)
 
 
 def global_evaluate(server_round: int, arrays: ArrayRecord) -> MetricRecord:
