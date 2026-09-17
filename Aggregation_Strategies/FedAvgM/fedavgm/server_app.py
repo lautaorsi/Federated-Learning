@@ -22,13 +22,15 @@ def main(grid: Grid, context: Context) -> None:
     lr: float = context.run_config["learning-rate"]
     alpha: float = context.run_config["alpha"]
     seed: int = context.run_config["seed"]
+    beta: float = context.run_config["beta"]
+
 
     # Load global model
     global_model = Net()
     arrays = ArrayRecord(global_model.state_dict())
 
     # Initialize FedAvg strategy
-    strategy = FedAvgM(fraction_evaluate=fraction_evaluate)
+    strategy = FedAvgM(fraction_evaluate=fraction_evaluate, server_momentum=beta)
 
     # Start strategy, run FedAvg for `num_rounds`
     result = strategy.start(
@@ -44,8 +46,7 @@ def main(grid: Grid, context: Context) -> None:
         print("\nSaving final model to disk...")
         state_dict = result.arrays.to_torch_state_dict()
         output_path = Path(
-            "/home/lo/Documents/Projects/Federated-Learning/"
-            "Aggregation_Strategies/FedAvgM/fedAvgM_alpha_1_final_model.pt"
+            f"/home/lo/Documents/Projects/Federated-Learning/Aggregation_Strategies/FedAvgM/fedAvgM_beta_{beta}.pt"
         )
         torch.save(state_dict, output_path)
 

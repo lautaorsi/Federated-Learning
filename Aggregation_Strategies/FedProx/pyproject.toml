@@ -33,7 +33,7 @@ local-epochs = 5
 batch-size = 32
 learning-rate = 0.01
 save-model = true
-mu = 0
+mu = 0.1
 alpha = 0.1
 seed = 47
 
