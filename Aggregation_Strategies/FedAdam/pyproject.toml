@@ -35,6 +35,10 @@ learning-rate = 0.01
 save-model = true
 alpha = 0.1
 seed = 47
+eta = 0.1
+tau = 0.1
+beta1 = 0.1
+beta2 = 0.1
 
 #######################################################################
 # CONFIGURATION MIGRATION NOTICE:

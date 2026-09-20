@@ -51,8 +51,8 @@ class Net(nn.Module):
 # ---------------------------------------------------------------------------
 
 
-def load_data(partition_id: int, num_partitions: int, batch_size: int):
-    return get_client_dataloaders(partition_id, num_partitions, batch_size)
+def load_data(partition_id: int, num_partitions: int, batch_size: int, alpha: float):
+    return get_client_dataloaders(partition_id, num_partitions, batch_size,alpha=alpha)
 
 
 def load_centralized_dataset():

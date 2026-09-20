@@ -46,7 +46,7 @@ def main(grid: Grid, context: Context) -> None:
         print("\nSaving final model to disk...")
         state_dict = result.arrays.to_torch_state_dict()
         output_path = Path(
-            f"/home/lo/Documents/Projects/Federated-Learning/Aggregation_Strategies/FedAvgM/fedAvgM_beta_{beta}.pt"
+            f"/home/lo/Documents/Projects/Federated-Learning/Aggregation_Strategies/FedAvgM/models/fedAvgM_alpha_{alpha}_seed_{seed}.pt"
         )
         torch.save(state_dict, output_path)
 
