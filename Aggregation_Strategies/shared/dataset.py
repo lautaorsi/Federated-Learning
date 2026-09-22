@@ -168,9 +168,15 @@ def _build_partitions(num_partitions: int, alpha: float):
         )
 
 
+from filelock import FileLock
+
 def _ensure_partitions(num_partitions: int, alpha: float):
-    if not _partitions_cached(num_partitions, alpha):
-        _build_partitions(num_partitions, alpha)
+    if _partitions_cached(num_partitions, alpha):
+        return
+    PARTITIONS_ROOT.mkdir(parents=True, exist_ok=True)
+    with FileLock(str(PARTITIONS_ROOT / f"n{num_partitions}_a{float(alpha)}.lock")):
+        if not _partitions_cached(num_partitions, alpha):  # re-check after waiting
+            _build_partitions(num_partitions, alpha)
 
 
 

@@ -1,0 +1,26 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260921212921
+Username: DESKTOP-NC7IUFB\lauti
+RunAs User: DESKTOP-NC7IUFB\lauti
+Configuration Name: 
+Machine: DESKTOP-NC7IUFB (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\lauti\AppData\Local\Programs\Microsoft VS Code\7debcd0e2a\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 13992
+PSVersion: 5.1.26100.9444
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
+BuildVersion: 10.0.26100.9444
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Running 12 runs in: C:\Users\lauti\Desktop\programas\Federated-Learning\Aggregation_Strategies\FedProx
+
+=== [1/12] flwr run . --run-config "alpha=0.1 seed=27 mu=0.01" --federation-config "num-supernodes=10" --stream ===
+PS>TerminatingError(Invoke-Expression): "The term 'flwr' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again."
+**********************
+Windows PowerShell transcript end
+End time: 20260921212921
+**********************

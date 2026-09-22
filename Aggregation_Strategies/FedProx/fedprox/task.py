@@ -58,22 +58,31 @@ def load_centralized_dataset():
     return get_centralized_dataloader()
 
 
-def train(net, trainloader, epochs, lr, device):
-    """Train the model on the training set."""
-    net.to(device)  # move model to GPU if available
+def train(net, trainloader, epochs, lr, device, proximal_mu=0.0):
+    net.to(device)  
     criterion = torch.nn.NLLLoss().to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9)
     net.train()
-    running_loss = 0.0
+
+   
+    global_params = [p.detach().clone() for p in net.parameters()]
+
+    running_loss = 0.0  
     for _ in range(epochs):
         for images, labels in trainloader:
             images = images.to(device)
             labels = labels.to(device)
             optimizer.zero_grad()
-            loss = criterion(net(images), labels)
+            data_loss = criterion(net(images), labels)
+            loss = data_loss
+            if proximal_mu > 0:
+                prox = sum(
+                    ((p - g) ** 2).sum() for p, g in zip(net.parameters(), global_params)
+                )
+                loss = data_loss + (proximal_mu / 2) * prox
             loss.backward()
             optimizer.step()
-            running_loss += loss.item()
+            running_loss += data_loss.item()
     avg_trainloss = running_loss / (epochs * len(trainloader))
     return avg_trainloss
 

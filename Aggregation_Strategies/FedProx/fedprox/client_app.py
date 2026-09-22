@@ -22,6 +22,8 @@ def train(msg: Message, context: Context):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
+    mu = msg.content["config"].get("proximal-mu", 0.0)
+
     # Load the data
     partition_id = context.node_config["partition-id"]
     num_partitions = context.node_config["num-partitions"]
@@ -36,6 +38,7 @@ def train(msg: Message, context: Context):
         context.run_config["local-epochs"],
         msg.content["config"]["lr"],
         device,
+        proximal_mu=mu
     )
 
     # Construct and return reply Message
